@@ -4,4 +4,4 @@ Statistical formalism vs. data exploration.
 
 -ggplot within .Rmd  
 
--Shiny
+-Shiny; https://mastering-shiny.org/
