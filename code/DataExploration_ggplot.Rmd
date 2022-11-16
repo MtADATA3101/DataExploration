@@ -67,6 +67,7 @@ Data %>%
 With 125 variables for histograms of data distribution, or `r length(combn(125, 2))` combinations of data cross plots  is time consuming, and manually pasting many different variables into ggplot() calls is error prone.
 
 # Set Axes variables External to ggplot
+This avoids pasting inside complex ggplot calls, and is more 'generic'.
 ```{r plotting external variables}
 
 #set fitting variables outside ggplot
@@ -85,7 +86,7 @@ Data %>%
   Showing off, provoking thought
   https://aosmith.rbind.io/2018/08/20/automating-exploratory-plots/
   
-```{r mapping ggplot variables}
+```{r setting variables for mapping}
 #Identify response and explanatory variables for cross plotting
 #In this case we will pick an arbitrary set of the first 10 variables for 'explanatory variables' and any variable that contains the string 'trunc' for 'response variables'.
 
@@ -98,11 +99,40 @@ ResponseVar = set_names(ResponseVar)
 
 ExplanVar
 #ResponseVar
-
-Data %>%
-  ggplot()+
-  geom_point(aes(x = !!sym(XVar), y = !!sym(YVar), colour = !!sym(ColourVar)))
-
 ```
   
+  # Set up function to iterate through multiple ggplots
+```{r plotting function}
+#https://aosmith.rbind.io/2018/08/20/automating-exploratory-plots/
+scatter_fun = function(data, x, y) {
+     ggplot(data, aes(x = .data[[x]], y = .data[[y]]) ) +
+          geom_point() +
+          theme_bw()
+}
+```
   
+  # Test function with single X & Y inputs
+```{r test plotting function}
+scatter_fun(data = Data, x = "OD720trunc_Lmax", y = "OD720trunc_Lmu_corr")
+
+```
+  'map' through a vector of variables as X inputs
+```{r loop through variable input vector}
+map(ExplanVar, ~scatter_fun(data = Data, .x, y = "OD720trunc_Lmu_corr") )
+```
+  
+  # 'map' through vectors for both x and for y by nesting 'map'
+  This is showing off...
+```{r }
+map(ResponseVar, function(resp) {
+     map(ExplanVar, function(expl) {
+          scatter_fun(data = Data, x = expl, y = resp)
+     })
+})
+```
+  
+  Additional variants and steps for saving at:
+  https://aosmith.rbind.io/2018/08/20/automating-exploratory-plots/
+  
+  What about a more interactive way to rapidly step through multiple plots of data?
+  ...Shiny!
