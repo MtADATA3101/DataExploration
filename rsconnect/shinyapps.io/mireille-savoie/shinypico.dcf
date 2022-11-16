@@ -1,0 +1,13 @@
+name: shinypico
+title:
+username:
+account: mireille-savoie
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 5241672
+bundleId: 6210415
+url: https://mireille-savoie.shinyapps.io/shinypico/
+when: 1660744534.74624
+lastSyncTime: 1660744534.74624
+asMultiple: FALSE
+asStatic: FALSE
