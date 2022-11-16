@@ -1,0 +1,108 @@
+---
+title: "DataExploration_ggplot"
+author:
+- Douglas A. Campbell:
+    institute: mta
+    email: dcampbel@mta.ca
+    correspondence: TRUE
+institute:
+  - mta: 'Department of Biology, Mount Allison University, 53 York St., Sackville NB, Canada, E4L 1C9.'
+date: "`r format(Sys.Date())`"  
+output:
+  bookdown::html_document2:
+    code_folding: show
+    keep_md: yes
+    fig_caption: yes
+    toc: TRUE
+    toc_float: TRUE
+    toc_depth: 6
+---
+
+This is  [R Markdown](http://rmarkdown.rstudio.com) Notebook outlines approaches to using ggplot to explore data efficiently.
+
+# Load Libraries
+```{r load libraries}
+library(tidyverse)
+#by loading library(tidyverse) I get the dplyr, ggplot2 and purrr packages used in this tutorial
+```
+
+# Load Data
+```{r load data}
+
+Data <- readRDS(file.path("..", "data", "MultiCultiData.Rds"))
+head(Data)
+
+# Data <- Data %>%
+#   select(
+#     where(
+#       ~!all(is.na(.x)) #remove columns of all na
+#     )
+#   ) %>%
+#   slice_head(n = 120)
+# 
+# saveRDS(Data, file = file.path("..", "data", "MultiCultiData.Rds"))
+
+```
+
+# What Variables are available to explore?
+```{r colnames}
+colnames(Data)
+```
+
+# Step through plots of variables of interest using ggplot
+Note I use the ggplot auto-assignment of X & Y axes labels and ranges.
+For data exploration, do not hard code variable labels, nor axes ranges, to limit risks of missing data.
+```{r ggplot interactively}
+Data %>%
+  ggplot() +
+  geom_histogram(aes(lognormOD720_TimetoMax))
+
+Data %>%
+  ggplot() +
+  geom_point(aes(x = OD720trunc_Lmax, y = OD720trunc_Lmu_corr))
+
+
+```
+
+With 125 variables for histograms of data distribution, or `r length(combn(125, 2))` combinations of data cross plots  is time consuming, and manually pasting many different variables into ggplot() calls is error prone.
+
+# Set Axes variables External to ggplot
+```{r plotting external variables}
+
+#set fitting variables outside ggplot
+XVar <- "OD720trunc_Lmax"
+YVar <- "OD720trunc_Lmu_corr"
+ColourVar <- "Strain"
+
+#https://rlang.r-lib.org/reference/injection-operator.html
+Data %>%
+  ggplot()+
+  geom_point(aes(x = !!sym(XVar), y = !!sym(YVar), colour = !!sym(ColourVar)))
+
+```
+
+# What about stepping through multiple variables for cross plots?
+  Showing off, provoking thought
+  https://aosmith.rbind.io/2018/08/20/automating-exploratory-plots/
+  
+```{r mapping ggplot variables}
+#Identify response and explanatory variables for cross plotting
+#In this case we will pick an arbitrary set of the first 10 variables for 'explanatory variables' and any variable that contains the string 'trunc' for 'response variables'.
+
+ExplanVar <- names(Data)[1:10]
+ResponseVar <- names(select(Data, contains('trunc')))
+
+#set the 'names' of the values within the ExplanVar and ResponseVar character vectors; we 'name' each element of the vector with the element string itself
+ExplanVar = set_names(ExplanVar)
+ResponseVar = set_names(ResponseVar)
+
+ExplanVar
+#ResponseVar
+
+Data %>%
+  ggplot()+
+  geom_point(aes(x = !!sym(XVar), y = !!sym(YVar), colour = !!sym(ColourVar)))
+
+```
+  
+  
