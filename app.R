@@ -4,7 +4,7 @@ library(stats)
 library(shinydashboard)
 
 print(getwd())
-data <- readRDS("data/PICO_MiSa_GrowthLogs_.Rds")
+data <- readRDS("data/MultiCultiData.Rds")
 
 
 choiceVariables <- c("PrimaryOperator", "Photoperiod", "Run", "WL", "O2_Category", "Strain", "Par_ue", "GrowthAmpOD720Flag", "GrowthAmpdeltaODFlag", "OD720GmuGrowthFlag","deltaODGmuGrowthFlag","SetActinic_day", "IsdeltaOD_GLagNeg","IsOD720_GLagNeg","None")
