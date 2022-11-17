@@ -40,6 +40,10 @@ head(Data)
 #   ) %>%
 #   slice_head(n = 120)
 # 
+# Data <- Data %>%
+#   select(-contains("_predict"))
+
+
 # saveRDS(Data, file = file.path("..", "data", "MultiCultiData.Rds"))
 
 ```
@@ -48,9 +52,26 @@ head(Data)
 ```{r colnames}
 colnames(Data)
 ```
+```{r describe a single variable}
+range(Data$deltaOD_GLag)
+mean(Data$deltaOD_GLag)
+sd(Data$deltaOD_GLag)
+length(Data$deltaOD_GLag)
+length(unique(Data$deltaOD_GLag))
+```
+Be judicious about creating intermediate or transitory data objects.
+```{r summarize the numeric data columns grouped by operator}
+#Summary <- 
+  
+  Data %>%
+  group_by(PrimaryOperator) %>%
+  summarize(across(where(is.numeric), mean))
+
+#Summary
+```
 
 # Step through plots of variables of interest using ggplot
-Note I use the ggplot auto-assignment of X & Y axes labels and ranges.
+Use the ggplot auto-assignment of X & Y axes labels and ranges.
 For data exploration, do not hard code variable labels, nor axes ranges, to limit risks of missing data.
 ```{r ggplot interactively}
 Data %>%
@@ -64,7 +85,15 @@ Data %>%
 
 ```
 
-With 125 variables for histograms of data distribution, or `r length(combn(125, 2))` combinations of data cross plots  is time consuming, and manually pasting many different variables into ggplot() calls is error prone.
+For some purposes ggplot is unnecessary; base::hist and base::plot work!
+```{r base plot interactively}
+plot(x = Data$lognormOD720_TimetoMax)
+hist(Data$lognormOD720_TimetoMax)
+
+plot(x = Data$OD720trunc_Lmax, y = Data$OD720trunc_Lmu_corr)
+```
+
+With 125 variables,  histograms of data distribution, or `r length(combn(125, 2))` combinations of data cross plots, are time consuming, and manually pasting many different variables into ggplot() calls is error prone.
 
 # Set Axes variables External to ggplot
 This avoids pasting inside complex ggplot calls, and is more 'generic'.
@@ -121,7 +150,7 @@ scatter_fun(data = Data, x = "OD720trunc_Lmax", y = "OD720trunc_Lmu_corr")
 map(ExplanVar, ~scatter_fun(data = Data, .x, y = "OD720trunc_Lmu_corr") )
 ```
   
-  # 'map' through vectors for both x and for y by nesting 'map'
+  # 'map' through vectors for both x and for y by nesting 'map' functions
   This is showing off...
 ```{r }
 map(ResponseVar, function(resp) {
@@ -131,8 +160,8 @@ map(ResponseVar, function(resp) {
 })
 ```
   
-  Additional variants and steps for saving at:
+  Additional variants and steps for saving multiple plots at:
   https://aosmith.rbind.io/2018/08/20/automating-exploratory-plots/
   
-  What about a more interactive way to rapidly step through multiple plots of data?
+# What about a more interactive way to rapidly step through multiple plots of data?
   ...Shiny!
