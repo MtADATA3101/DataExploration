@@ -95,6 +95,8 @@ plot(x = Data$OD720trunc_Lmax, y = Data$OD720trunc_Lmu_corr)
 
 With 125 variables,  histograms of data distribution, or `r length(combn(125, 2))` combinations of data cross plots, are time consuming, and manually pasting many different variables into ggplot() calls is error prone.
 
+XY Cross plots are useful to show data ranges, potential interactions among variables, and to uncover unexpected patterns that may indicate issues with data classes or data structures.
+
 # Set Axes variables External to ggplot
 This avoids pasting inside complex ggplot calls, and is more 'generic'.
 ```{r plotting external variables}
