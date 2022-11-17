@@ -6,6 +6,8 @@ Statistical formalism vs. data exploration.
 
 -ggplot within .Rmd  
 
--Shiny; https://mastering-shiny.org/
+-Shiny; 
+https://shiny.rstudio.com/tutorial/
+https://mastering-shiny.org/
 
 
