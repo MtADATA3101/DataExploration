@@ -2,12 +2,11 @@
 library(shiny)
 
 ui <- fluidPage(
-  textOutput("text"),
-  verbatimTextOutput("print")
+  plotOutput("plot", width = "400px")
 )
 server <- function(input, output, session) {
-  output$text <- renderText("hello!")
-  output$print <- renderPrint("hello!")
+  output$plot <- renderPlot(plot(1:5), res = 96)
 }
+
 # Run the application 
 shinyApp(ui = ui, server = server)
