@@ -54,17 +54,21 @@ head(Data)
 ```{r colnames}
 colnames(Data)
 ```
+
+
 ```{r describe a single variable}
 range(Data$deltaOD_GLag)
 mean(Data$deltaOD_GLag)
 sd(Data$deltaOD_GLag)
 length(Data$deltaOD_GLag)
 length(unique(Data$deltaOD_GLag))
+median(Data$deltaOD_GLag)
 ```
+
 Be judicious about creating intermediate or transitory data objects.
 ```{r summarize the numeric data columns grouped by operator}
 #Summary <- 
-  
+
   Data %>%
   group_by(PrimaryOperator) %>%
   summarize(across(where(is.numeric), mean))
@@ -81,21 +85,27 @@ Data %>%
   geom_histogram(aes(lognormOD720_TimetoMax))
 
 Data %>%
+  slice_tail(n = 50) %>%
   ggplot() +
-  geom_point(aes(x = OD720trunc_Lmax, y = OD720trunc_Lmu_corr))
+  geom_point(aes(x = jitter(lognormOD720_TimetoMax), y = OD720trunc_Lmu_corr, colour = PrimaryOperator))
 
+Data %>%
+  slice_tail(n = 50) %>%
+  ggplot() +
+  geom_point(aes(x = lognormOD720_TimetoMax, y = OD720trunc_Lmu_corr, colour = PrimaryOperator), position = "jitter")
 
 ```
+https://r-graphics.org/recipe-scatter-overplot
 
 For some purposes ggplot is unnecessary; base::hist and base::plot work!
 ```{r base plot interactively}
 plot(x = Data$lognormOD720_TimetoMax)
 hist(Data$lognormOD720_TimetoMax)
 
-plot(x = Data$OD720trunc_Lmax, y = Data$OD720trunc_Lmu_corr)
+plot(x = log10(Data$OD720trunc_Lmax), y = Data$OD720trunc_Lmu_corr)
 ```
 
-With 125 variables,  histograms of data distribution, or `r length(combn(125, 2))` combinations of data cross plots, are time consuming, and manually pasting many different variables into ggplot() calls is error prone.
+With 125 variables,  histograms of data distribution, or `r ` combinations of data cross plots, are time consuming, and manually pasting many different variables into ggplot() calls is error prone.
 
 XY Cross plots are useful to show data ranges, potential interactions among variables, and to uncover unexpected patterns that may indicate issues with data classes or data structures.
 
@@ -107,11 +117,15 @@ This avoids pasting inside complex ggplot calls, and is more 'generic'.
 XVar <- "OD720trunc_Lmax"
 YVar <- "OD720trunc_Lmu_corr"
 ColourVar <- "Strain"
+FacetVar1 <- "PrimaryOperator"
 
 #https://rlang.r-lib.org/reference/injection-operator.html
 Data %>%
   ggplot()+
   geom_point(aes(x = !!sym(XVar), y = !!sym(YVar), colour = !!sym(ColourVar)))
+
+#+
+ # facet_grid(rows = !!sym(var(FacetVar1)))
 
 ```
 
@@ -151,7 +165,7 @@ scatter_fun(data = Data, x = "OD720trunc_Lmax", y = "OD720trunc_Lmu_corr")
 ```
   'map' through a vector of variables as X inputs
 ```{r loop through variable input vector}
-map(ExplanVar, ~scatter_fun(data = Data, .x, y = "OD720trunc_Lmu_corr") )
+purrr::map(ExplanVar, ~scatter_fun(data = Data, .x, y = "OD720trunc_Lmu_corr") )
 ```
   
   # 'map' through vectors for both x and for y by nesting 'map' functions
