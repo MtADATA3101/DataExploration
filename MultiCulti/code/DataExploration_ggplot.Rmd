@@ -20,6 +20,8 @@ output:
 
 This is  [R Markdown](http://rmarkdown.rstudio.com) Notebook outlines approaches to using ggplot to explore data efficiently.
 
+There is a huge gap between internal data exploration by specialists, and publication or interactive outputs for general use.
+
 # Load Libraries
 ```{r load libraries}
 library(tidyverse)
