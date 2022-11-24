@@ -22,7 +22,8 @@ ui <- fluidPage(
 
 server <- function(input, output, session) {
   output$plot <- renderPlot({
-    ggplot(Data, aes(x = !!input$XVar, y = !!input$YVar)) + geom_point()
+    ggplot(Data) + 
+      geom_point(aes(x = !!input$XVar, y = !!input$YVar))
     }, res = 96)
 }
 
