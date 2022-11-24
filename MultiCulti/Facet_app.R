@@ -15,6 +15,7 @@ ui <- fluidPage(
   #selectInput("RowVar", label =  "Select Variable for Facet Rows", choices =  colnames(Data), ""),
   varSelectInput("RowVar", label =  "Select Variable for Facet Rows", Data),
   selectInput("ColVar", label = "Select Variable for Facet Columns", choices =  colnames(Data), ""),
+  selectInput("MyVar", label = "Select MyVar", choices =  c("Bob", "Sally", "Mgumi")),
   
   plotOutput("plot", width = "400px")
 )
@@ -26,11 +27,11 @@ server <- function(input, output, session) {
   output$plot <- renderPlot({
     ggplot(Data) + 
       geom_point(aes(x = !!input$XVar, y = !!input$YVar, colour = !!input$ColourVar)) +
+      geom_smooth(aes(x = !!input$XVar, y = !!input$YVar, colour = !!input$ColourVar), method = "lm") +
       facet_grid(rows = vars(!!input$RowVar), cols =  vars(!!sym(input$ColVar)))
      # facet_grid(rows = vars(!!sym(input$RowVar)), cols =  vars(!!sym(input$ColVar)))
   }, res = 96)
 }
-
 
 #Execute shinyApp(ui, server) to construct and start a Shiny application from UI and server.
 shinyApp(ui, server)
