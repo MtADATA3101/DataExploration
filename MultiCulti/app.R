@@ -35,7 +35,7 @@ ui <- dashboardPage(
         )
         )
       ),
-      fluidRow( 
+      fluidRow(
       box(
         background = "black",
         checkboxGroupInput(
